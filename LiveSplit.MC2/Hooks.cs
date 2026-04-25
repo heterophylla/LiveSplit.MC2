@@ -1,11 +1,96 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using LiveSplit.ComponentUtil;
 
 namespace LiveSplit.MC2
 {
+    internal struct SplitPair
+    {
+        public string SplitName;
+        public bool SplitFlag;
+    }
+    
     class Hooks : IDisposable
     {
+        private readonly Dictionary<string, SplitPair> _RaceName = new Dictionary<string, SplitPair>
+        {
+            {"lamauro_Moses_Checkpoint_One",               new SplitPair {SplitName = "Moses 1",            SplitFlag = false}},
+            {"lamauro_Moses_Checkpoint_Two",               new SplitPair {SplitName = "Moses 2",            SplitFlag = false}},
+            {"lamauro_Steven_Checkpoint_One",              new SplitPair {SplitName = "Steven 1",           SplitFlag = false}},
+            {"lachrisbeta_Steven_Checkpoint_Two",          new SplitPair {SplitName = "Steven 2",           SplitFlag = false}},
+            {"lamauro_Maria_Checkpoint_One",               new SplitPair {SplitName = "Maria 1",            SplitFlag = false}},
+            {"lamauro_Maria_Checkpoint_Two",               new SplitPair {SplitName = "Maria 2",            SplitFlag = false}},
+            {"lamauro_Angel_Checkpoint_One",               new SplitPair {SplitName = "Angel 1",            SplitFlag = false}},
+            {"lamauro_Angel_SideRace",                     new SplitPair {SplitName = "Angel Siderace",     SplitFlag = false}},
+            {"lamauro_Angel_Checkpoint_Two",               new SplitPair {SplitName = "Angel 2",            SplitFlag = false}},
+            {"laChris_Gina_Checkpoint_One",                new SplitPair {SplitName = "Gina 1",             SplitFlag = false}},
+            {"laChris_Gina_SideRace",                      new SplitPair {SplitName = "Gina Siderace",      SplitFlag = false}},
+            {"laChris_Gina_Bike_Tutorial",                 new SplitPair {SplitName = "Gina Bike Tutorial", SplitFlag = false}},
+            {"laChris_Gina_Checkpoint_Two",                new SplitPair {SplitName = "Gina 2",             SplitFlag = false}},
+            {"lawing_Hector_LoseTheCops",                  new SplitPair {SplitName = "Hector Lose Cops",   SplitFlag = false}},
+            {"lachrisbeta_Hector_Checkpoint_Two",          new SplitPair {SplitName = "Hector 2",           SplitFlag = false}},
+            {"lachrisbeta_Hector_Checkpoint_Three",        new SplitPair {SplitName = "Hector 3",           SplitFlag = false}},
+            {"lamaurobeta_Dice_Checkpoint_One",            new SplitPair {SplitName = "Dice 1",             SplitFlag = false}},
+            {"lamaurobeta_Dice_Checkpoint_Two",            new SplitPair {SplitName = "Dice 2",             SplitFlag = false}},
+            {"parischris_Blog_Checkpoint_One",             new SplitPair {SplitName = "Blog 1",             SplitFlag = false}},
+            {"parischris_Blog_Checkpoint_Two",             new SplitPair {SplitName = "Blog 2",             SplitFlag = false}},
+            {"pariswing_Julie_Checkpoint_One",             new SplitPair {SplitName = "Julie 1",            SplitFlag = false}},
+            {"pariswing_Julie_Checkpoint_Two",             new SplitPair {SplitName = "Julie 2",            SplitFlag = false}},
+            {"parischris_Primo_Checkpoint_One",            new SplitPair {SplitName = "Primo 1",            SplitFlag = false}},
+            {"paris_Primo_Checkpoint_Two",                 new SplitPair {SplitName = "Primo 2",            SplitFlag = false}},
+            {"parischris_Stephane_Checkpoint_One",         new SplitPair {SplitName = "Stephane 1",         SplitFlag = false}},
+            {"parischris_Stephane_Checkpoint_Two",         new SplitPair {SplitName = "Stephane 2",         SplitFlag = false}},
+            {"paris_Ian_Checkpoint_One",                   new SplitPair {SplitName = "Ian 1",              SplitFlag = false}},
+            {"paris_Ian_Checkpoint_Two",                   new SplitPair {SplitName = "Ian 2",              SplitFlag = false}},
+            {"paris_Ian_SideRace",                         new SplitPair {SplitName = "Ian Siderace",       SplitFlag = false}},
+            {"pariswing_Farid_Checkpoint_One",             new SplitPair {SplitName = "Farid 1",            SplitFlag = false}},
+            {"pariswing_Farid_LoseTheCops",                new SplitPair {SplitName = "Farid Lose Cops",    SplitFlag = false}},
+            {"pariswing_Farid_SideRace",                   new SplitPair {SplitName = "Farid Siderace",     SplitFlag = false}},
+            {"paris_Parfait_Checkpoint_One",               new SplitPair {SplitName = "Parfait 1",          SplitFlag = false}},
+            {"paris_Parfait_Checkpoint_Two",               new SplitPair {SplitName = "Parfait 2",          SplitFlag = false}},
+            {"tokyochris_Shing_Checkpoint_One",            new SplitPair {SplitName = "Shing 1",            SplitFlag = false}},
+            {"tokyochris_Shing_SideRace",                  new SplitPair {SplitName = "Shing Siderace",     SplitFlag = false}},
+            {"tokyochris_Shing_Checkpoint_Two",            new SplitPair {SplitName = "Shing 2",            SplitFlag = false}},
+            {"tokyomauro_Ricky_Checkpoint_One",            new SplitPair {SplitName = "Ricky 1",            SplitFlag = false}},
+            {"tokyomauro_Ricky_Checkpoint_Two",            new SplitPair {SplitName = "Ricky 2",            SplitFlag = false}},
+            {"tokyo_Haley_Checkpoint_One",                 new SplitPair {SplitName = "Haley 1",            SplitFlag = false}},
+            {"tokyo_Haley_Checkpoint_Two",                 new SplitPair {SplitName = "Haley 2",            SplitFlag = false}},
+            {"tokyomarc_Nikko_Checkpoint_One",             new SplitPair {SplitName = "Nikko 1",            SplitFlag = false}},
+            {"tokyomarc_Nikko_Checkpoint_Two",             new SplitPair {SplitName = "Nikko 2",            SplitFlag = false}},
+            {"tokyowing_Zen_checkpoint_one",               new SplitPair {SplitName = "Zen 1",              SplitFlag = false}},
+            {"tokyowing_Zen_checkpoint_two",               new SplitPair {SplitName = "Zen 2",              SplitFlag = false}},
+            {"tokyo_Kenichi_Checkpoint_One",               new SplitPair {SplitName = "Kenichi 1",          SplitFlag = false}},
+            {"tokyo_Kenichi_Checkpoint_Two",               new SplitPair {SplitName = "Kenichi 2",          SplitFlag = false}},
+            {"tokyo_Kenichi_Checkpoint_Three",             new SplitPair {SplitName = "Kenichi 3",          SplitFlag = false}},
+            {"tokyochris_Makoto_Checkpoint_One",           new SplitPair {SplitName = "Makoto 1",           SplitFlag = false}},
+            {"tokyochris_Makoto_Checkpoint_Two",           new SplitPair {SplitName = "Makoto 2",           SplitFlag = false}},
+            {"tokyomarc_WorldChampTokyo_Checkpoint_One",   new SplitPair {SplitName = "Savo Tokyo 1",       SplitFlag = false}},
+            {"tokyomarc_WorldChampTokyo_Checkpoint_Two",   new SplitPair {SplitName = "Savo Tokyo 2",       SplitFlag = false}},
+            {"paris_WorldChampParis_Checkpoint_One",       new SplitPair {SplitName = "Savo Paris 1",       SplitFlag = false}},
+            {"paris_WorldChampParis_Checkpoint_Two",       new SplitPair {SplitName = "Savo Paris 2",       SplitFlag = false}},
+            {"lachrisbeta_WorldChampLA_Checkpoint_One",    new SplitPair {SplitName = "Savo LA 1",          SplitFlag = false}},
+            {"laWC_WorldChampLA_Checkpoint_Two",           new SplitPair {SplitName = "Savo LA 2",          SplitFlag = false}},
+            {"lamauro_Arcade_Circuit_One",                 new SplitPair {SplitName = "LA Arcade 1",        SplitFlag = false}},
+            {"lachris_Arcade_Circuit_Two",                 new SplitPair {SplitName = "LA Arcade 2",        SplitFlag = false}},
+            {"lachris_Arcade_Circuit_Three",               new SplitPair {SplitName = "LA Arcade 3",        SplitFlag = false}},
+            {"lachris_Arcade_Circuit_Four",                new SplitPair {SplitName = "LA Arcade 4",        SplitFlag = false}},
+            {"lachris_Arcade_Circuit_Five",                new SplitPair {SplitName = "LA Arcade 5",        SplitFlag = false}},
+            {"paris_Arcade_Circuit_One",                   new SplitPair {SplitName = "Paris Arcade 1",     SplitFlag = false}},
+            {"paris_Arcade_Circuit_Two",                   new SplitPair {SplitName = "Paris Arcade 2",     SplitFlag = false}},
+            {"paris_Arcade_Circuit_Three",                 new SplitPair {SplitName = "Paris Arcade 3",     SplitFlag = false}},
+            {"paris_Arcade_Circuit_Four",                  new SplitPair {SplitName = "Paris Arcade 4",     SplitFlag = false}},
+            {"paris_Arcade_Circuit_Five",                  new SplitPair {SplitName = "Paris Arcade 5",     SplitFlag = false}},
+            {"paris_Arcade_Circuit_Six",                   new SplitPair {SplitName = "Paris Arcade 6",     SplitFlag = false}},
+            {"tokyoarcade_Arcade_Circuit_One",             new SplitPair {SplitName = "Tokyo Arcade 1",     SplitFlag = false}},
+            {"tokyoarcade_Arcade_Circuit_Two",             new SplitPair {SplitName = "Tokyo Arcade 2",     SplitFlag = false}},
+            {"tokyowing_Arcade_Circuit_Three",             new SplitPair {SplitName = "Tokyo Arcade 3",     SplitFlag = false}},
+            {"tokyoarcade_Arcade_Circuit_Four",            new SplitPair {SplitName = "Tokyo Arcade 4",     SplitFlag = false}},
+            {"tokyoarcade_Arcade_Circuit_Five",            new SplitPair {SplitName = "Tokyo Arcade 5",     SplitFlag = false}},
+            {"tokyotroy_Arcade_Circuit_Six",               new SplitPair {SplitName = "Tokyo Arcade 6",     SplitFlag = false}},
+            {"tokyotroy_Arcade_Circuit_Seven",             new SplitPair {SplitName = "Tokyo Arcade 7",     SplitFlag = false}}
+        };
+        
         Component _parent;
         Process _mc2;
         IntPtr _baseaddr;
@@ -14,6 +99,8 @@ namespace LiveSplit.MC2
 
         MemoryWatcher<byte> _loading, _disclaimer;
         MemoryWatcherList _memory = new MemoryWatcherList();
+        MemoryWatcher<byte> IsRace;
+        StringWatcher CurrentRace;
 
         X86Generator _maingen = new X86Generator();
         X86Generator _game = new X86Generator();
@@ -22,6 +109,9 @@ namespace LiveSplit.MC2
         X86Generator _raceeditor = new X86Generator();
         X86Generator _carviewer = new X86Generator();
         X86Generator _jmp = new X86Generator();
+
+        public event EventHandler OnLoadStartAfterFrontend;
+        public event EventHandler OnRaceStart;
 
         public Hooks(Component parent)
         {
@@ -59,6 +149,12 @@ namespace LiveSplit.MC2
             _disclaimer = new MemoryWatcher<byte>(_baseaddr + 0x2622B0);
             _disclaimer.OnChanged += On_Disclaimer;
             _memory.Add(_disclaimer);
+
+            IsRace = new MemoryWatcher<byte>(_baseaddr + 0x2C2EE0);
+            _memory.Add(IsRace);
+            CurrentRace = new StringWatcher(_baseaddr + 0x2C2EE0, 64);
+            _memory.Add(CurrentRace);
+            
         }
 
         private bool TestProcess(Process process)
@@ -102,7 +198,21 @@ namespace LiveSplit.MC2
                     foreach (Process p in Process.GetProcesses())
                         if (TestProcess(p)) break;
 
-                if (_mc2 != null) _memory.UpdateAll(_mc2);
+                if (_mc2 != null)
+                {
+                    _memory.UpdateAll(_mc2);
+
+                    if (_loading.Old == 2 && _loading.Current == 1)
+                    {
+                        this.OnLoadStartAfterFrontend?.Invoke(this, EventArgs.Empty);
+                    }
+
+                    if(IsRace.Old != IsRace.Current && IsRace.Current != 0
+                       && CurrentRace.Current == "lamauro_Moses_Checkpoint_One")
+                    {
+                        this.OnRaceStart?.Invoke(this, EventArgs.Empty);
+                    }
+                } 
             }
             catch
             {
