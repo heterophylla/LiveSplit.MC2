@@ -90,6 +90,45 @@ namespace LiveSplit.MC2
             {"tokyotroy_Arcade_Circuit_Six",               new SplitPair {SplitName = "Tokyo Arcade 6",     SplitFlag = false}},
             {"tokyotroy_Arcade_Circuit_Seven",             new SplitPair {SplitName = "Tokyo Arcade 7",     SplitFlag = false}}
         };
+
+        private readonly Dictionary<string, SplitPair> _HookmanLastCutscene = new Dictionary<string, SplitPair>
+        {
+            {"la/moses_04.pss",     new SplitPair {SplitName = "Moses",     SplitFlag = false}},
+            {"la/steve_03.pss",     new SplitPair {SplitName = "Steven",    SplitFlag = false}},  
+            {"la/pica_03.pss",      new SplitPair {SplitName = "Maria",     SplitFlag = false}},  
+            {"la/angel_04.pss",     new SplitPair {SplitName = "Angel",     SplitFlag = false}},  
+            {"la/angel_4b.pss",     new SplitPair {SplitName = "Angel",     SplitFlag = false}},  
+            {"la/Gina_04.pss",      new SplitPair {SplitName = "Gina",      SplitFlag = false}},  
+            {"la/Gina_4b.pss",      new SplitPair {SplitName = "Gina",      SplitFlag = false}},  
+            {"la/Hectr_04.pss",     new SplitPair {SplitName = "Hector",    SplitFlag = false}},  
+            {"la/Hectr_4b.pss",     new SplitPair {SplitName = "Hector",    SplitFlag = false}},  
+            {"la/Dice_03.pss",      new SplitPair {SplitName = "Dice",      SplitFlag = false}},  
+            {"Paris/blog_03.pss",   new SplitPair {SplitName = "Blog",      SplitFlag = false}},  
+            {"Paris/Twins_03.pss",  new SplitPair {SplitName = "Julie",     SplitFlag = false}},  
+            {"Paris/Primo_03.pss",  new SplitPair {SplitName = "Primo",     SplitFlag = false}},  
+            {"Paris/steph_03.pss",  new SplitPair {SplitName = "Stephane",  SplitFlag = false}},  
+            {"Paris/Ian_04.pss",    new SplitPair {SplitName = "Ian",       SplitFlag = false}},  
+            {"Paris/Ian_4b.pss",    new SplitPair {SplitName = "Ian",       SplitFlag = false}},  
+            {"Paris/Farid_04.pss",  new SplitPair {SplitName = "Farid",     SplitFlag = false}},  
+            {"Paris/Farid_4b.pss",  new SplitPair {SplitName = "Farid",     SplitFlag = false}},  
+            {"Paris/Parft_03.pss",  new SplitPair {SplitName = "Parfait",   SplitFlag = false}},  
+            {"Tokyo/Shing_04.pss",  new SplitPair {SplitName = "Shing",     SplitFlag = false}},  
+            {"Tokyo/Ricky_03.pss",  new SplitPair {SplitName = "Ricky",     SplitFlag = false}},  
+            {"Tokyo/Haley_03.pss",  new SplitPair {SplitName = "Haley",     SplitFlag = false}},  
+            {"Tokyo/Nikko_03.pss",  new SplitPair {SplitName = "Nikko",     SplitFlag = false}},  
+            {"Tokyo/Zen_03.pss",    new SplitPair {SplitName = "Zen",       SplitFlag = false}},  
+            {"Tokyo/Zen_3b.pss",    new SplitPair {SplitName = "Zen",       SplitFlag = false}},  
+            {"Tokyo/Ken_04.pss",    new SplitPair {SplitName = "Kenichi",   SplitFlag = false}},  
+            {"Tokyo/Ken_4b.pss",    new SplitPair {SplitName = "Kenichi",   SplitFlag = false}},  
+            {"Tokyo/Mako_03.pss",   new SplitPair {SplitName = "Makoto",    SplitFlag = false}} 
+        };
+
+        private readonly List<string> excludeList = new List<string>
+        {
+            "la/angel_4b.pss", "la/Gina_4b.pss", "la/Hectr_4b.pss",
+            "Paris/Ian_4b.pss", "Paris/Farid_4b.pss",
+            "Tokyo/Zen_3b.pss", "Tokyo/Ken_4b.pss"
+        };
         
         Component _parent;
         Process _mc2;
@@ -100,7 +139,9 @@ namespace LiveSplit.MC2
         MemoryWatcher<byte> _loading, _disclaimer;
         MemoryWatcherList _memory = new MemoryWatcherList();
         MemoryWatcher<byte> IsRace;
+        MemoryWatcher<byte> IsCruise;
         StringWatcher CurrentRace;
+        StringWatcher CurrentCutscene;
 
         X86Generator _maingen = new X86Generator();
         X86Generator _game = new X86Generator();
@@ -112,6 +153,7 @@ namespace LiveSplit.MC2
 
         public event EventHandler OnLoadStartAfterFrontend;
         public event EventHandler OnRaceStart;
+        public event EventHandler OnHookmanLastCutscene;
 
         public Hooks(Component parent)
         {
@@ -152,8 +194,13 @@ namespace LiveSplit.MC2
 
             IsRace = new MemoryWatcher<byte>(_baseaddr + 0x2C2EE0);
             _memory.Add(IsRace);
+            IsCruise = new MemoryWatcher<byte>(_baseaddr + 0x2C2F60);
+            _memory.Add(IsCruise);
+
             CurrentRace = new StringWatcher(_baseaddr + 0x2C2EE0, 64);
             _memory.Add(CurrentRace);
+            CurrentCutscene = new StringWatcher(_baseaddr + 0x2C31A0, 64);
+            _memory.Add(CurrentCutscene);
             
         }
 
@@ -183,7 +230,7 @@ namespace LiveSplit.MC2
             return true;
         }
 
-        public void Update()
+        public void Update(Settings _settings)
         {
             try
             {
@@ -202,15 +249,44 @@ namespace LiveSplit.MC2
                 {
                     _memory.UpdateAll(_mc2);
 
-                    if (_loading.Old == 2 && _loading.Current == 1)
+                    // Start from first career cutscene
+                    if (_loading.Changed && _loading.Current == 0 && IsCruise.Current == 0 &&
+                        CurrentCutscene.Current == "la/moses_01.pss")
                     {
                         this.OnLoadStartAfterFrontend?.Invoke(this, EventArgs.Empty);
                     }
-
-                    if(IsRace.Old != IsRace.Current && IsRace.Current != 0
-                       && CurrentRace.Current == "lamauro_Moses_Checkpoint_One")
+                    // Start for Paris%,Tokyo%,Savo%,Arcade%
+                    //if () {}
+                    // Split on Race Start
+                    if(CurrentRace.Changed && IsRace.Current != 0
+                       && _RaceName.ContainsKey(CurrentRace.Current))
                     {
-                        this.OnRaceStart?.Invoke(this, EventArgs.Empty);
+                        SplitPair splitPair = _RaceName[CurrentRace.Current];
+                        if (!splitPair.SplitFlag)
+                        {
+                            this.OnRaceStart?.Invoke(this, EventArgs.Empty);
+                            splitPair.SplitFlag = true;
+                            _RaceName[CurrentRace.Current] = splitPair;     //Wait how do I changing _RaceName if its readonly?
+                        }
+                    }
+
+                    // Split on Hookman Complete
+                    if( (IsRace.Changed || IsCruise.Changed) &&
+                        (IsRace.Current != 0 || IsCruise.Current != 0 ) &&
+                        _HookmanLastCutscene.ContainsKey(CurrentCutscene.Current) )
+                    {
+                        SplitPair splitPair = _HookmanLastCutscene[CurrentCutscene.Current];
+
+                        if (!splitPair.SplitFlag)
+                        {
+                            // To prevent double splitting
+                            if ( !(_settings.SplitRace && excludeList.Contains(CurrentCutscene.Current)) )
+                            {
+                                this.OnHookmanLastCutscene?.Invoke(this, EventArgs.Empty);
+                                splitPair.SplitFlag = true;
+                                _HookmanLastCutscene[CurrentCutscene.Current] = splitPair;
+                            }  
+                        }
                     }
                 } 
             }

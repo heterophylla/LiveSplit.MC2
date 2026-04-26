@@ -23,6 +23,7 @@ namespace LiveSplit.MC2
             _hooks = new Hooks(this);
             _hooks.OnLoadStartAfterFrontend += On_LoadStartAfterFrontend;
             _hooks.OnRaceStart += On_RaceStart;
+            _hooks.OnHookmanLastCutscene += On_HookmanLastCutscene;
 
             _settings = new Settings();
 
@@ -46,7 +47,7 @@ namespace LiveSplit.MC2
         private void UpdateHook(object sender, EventArgs e)
         {
             _timer.Enabled = false;
-            _hooks.Update();
+            _hooks.Update(_settings);
             _timer.Enabled = true;
         }
 
@@ -57,12 +58,19 @@ namespace LiveSplit.MC2
 
         void On_LoadStartAfterFrontend(object sender, EventArgs e) //TODO: Not working First time? Cuz of hook != 2 on first stasrt?
         {
-            _timermodel.Start();
+            if (_settings.Start) _timermodel.Start();
         }
 
         void On_RaceStart(object sender, EventArgs e)
         {
-            _timermodel.Split();
+            if (_settings.Split && _settings.SplitRace) 
+                _timermodel.Split();
+        }
+
+        void On_HookmanLastCutscene(object sender, EventArgs e)
+        {
+            if (_settings.Split && _settings.SplitHookman)
+                _timermodel.Split();
         }
         public void On_Loading(bool loading) => _state.IsGameTimePaused = loading;
 

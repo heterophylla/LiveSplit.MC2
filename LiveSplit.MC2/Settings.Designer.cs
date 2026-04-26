@@ -1,4 +1,6 @@
-﻿namespace LiveSplit.MC2
+﻿using System.Windows.Forms;
+
+namespace LiveSplit.MC2
 {
     partial class Settings
     {
@@ -35,10 +37,10 @@
             this.checkBoxReset = new System.Windows.Forms.CheckBox();
             this.panelSplits = new System.Windows.Forms.Panel();
             this.labelSplits = new System.Windows.Forms.Label();
-            this.treeViewSplits = new System.Windows.Forms.TreeView();
-            this.buttonUncheckAll = new System.Windows.Forms.Button();
-            this.buttonCheckAll = new System.Windows.Forms.Button();
-            this.buttonDefault = new System.Windows.Forms.Button();
+            this.checkBoxHookman = new System.Windows.Forms.CheckBox();
+            this.checkBoxRace = new System.Windows.Forms.CheckBox();
+            this.checkBoxAnyFinish = new System.Windows.Forms.CheckBox();
+            this.checkBoxHundoFinish = new System.Windows.Forms.CheckBox();
             this.panelOptions.SuspendLayout();
             this.panelSplits.SuspendLayout();
             this.SuspendLayout();
@@ -101,10 +103,10 @@
             //
             // panelSplits
             //
-            this.panelSplits.Controls.Add(this.buttonDefault);
-            this.panelSplits.Controls.Add(this.buttonCheckAll);
-            this.panelSplits.Controls.Add(this.buttonUncheckAll);
-            this.panelSplits.Controls.Add(this.treeViewSplits);
+            this.panelSplits.Controls.Add(this.checkBoxHookman);
+            this.panelSplits.Controls.Add(this.checkBoxRace);
+            this.panelSplits.Controls.Add(this.checkBoxAnyFinish);
+            this.panelSplits.Controls.Add(this.checkBoxHundoFinish);
             this.panelSplits.Controls.Add(this.labelSplits);
             this.panelSplits.Location = new System.Drawing.Point(3, 29);
             this.panelSplits.Name = "panelSplits";
@@ -121,43 +123,54 @@
             this.labelSplits.TabIndex = 0;
             this.labelSplits.Text = "Splits:";
             //
-            // treeViewSplits
+            // checkBoxSplitHookman
             //
-            this.treeViewSplits.Location = new System.Drawing.Point(38, 1);
-            this.treeViewSplits.Name = "treeViewSplits";
-            this.treeViewSplits.Size = new System.Drawing.Size(427, 429);
-            this.treeViewSplits.TabIndex = 1;
-            this.treeViewSplits.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewSplits_AfterCheck);
+            this.checkBoxHookman.Checked = true;
+            this.checkBoxHookman.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxHookman.AutoSize = true;
+            this.checkBoxHookman.Location = new System.Drawing.Point(43, 1);
+            this.checkBoxHookman.Name = "checkBoxSplitHookman";
+            this.checkBoxHookman.Size = new System.Drawing.Size(48, 17);
+            this.checkBoxHookman.TabIndex = 1;
+            this.checkBoxHookman.Text = "Hookman (complete)";
+            this.checkBoxHookman.UseVisualStyleBackColor = true;
+            this.checkBoxHookman.CheckStateChanged += new System.EventHandler(this.checkBoxHookman_CheckStateChanged);
             //
-            // buttonUncheckAll
+            // checkBoxSplitRace
             //
-            this.buttonUncheckAll.Location = new System.Drawing.Point(230, 434);
-            this.buttonUncheckAll.Name = "buttonUncheckAll";
-            this.buttonUncheckAll.Size = new System.Drawing.Size(75, 23);
-            this.buttonUncheckAll.TabIndex = 7;
-            this.buttonUncheckAll.Text = "Uncheck all";
-            this.buttonUncheckAll.UseVisualStyleBackColor = true;
-            this.buttonUncheckAll.Click += new System.EventHandler(this.buttonUncheckAll_Click);
+            this.checkBoxRace.Checked = true;
+            this.checkBoxRace.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxRace.AutoSize = true;
+            this.checkBoxRace.Location = new System.Drawing.Point(43, 18);
+            this.checkBoxRace.Name = "checkBoxSplitRace";
+            this.checkBoxRace.Size = new System.Drawing.Size(48, 17);
+            this.checkBoxRace.TabIndex = 1;
+            this.checkBoxRace.Text = "Race (start)";
+            this.checkBoxRace.UseVisualStyleBackColor = true;
             //
-            // buttonCheckAll
+            // checkBoxAnyFinish
             //
-            this.buttonCheckAll.Location = new System.Drawing.Point(310, 434);
-            this.buttonCheckAll.Name = "buttonCheckAll";
-            this.buttonCheckAll.Size = new System.Drawing.Size(75, 23);
-            this.buttonCheckAll.TabIndex = 8;
-            this.buttonCheckAll.Text = "Check all";
-            this.buttonCheckAll.UseVisualStyleBackColor = true;
-            this.buttonCheckAll.Click += new System.EventHandler(this.buttonCheckAll_Click);
+            this.checkBoxAnyFinish.Checked = true;
+            this.checkBoxAnyFinish.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxAnyFinish.AutoSize = true;
+            this.checkBoxAnyFinish.Location = new System.Drawing.Point(43, 35);
+            this.checkBoxAnyFinish.Name = "checkBoxSplitRace";
+            this.checkBoxAnyFinish.Size = new System.Drawing.Size(48, 17);
+            this.checkBoxAnyFinish.TabIndex = 1;
+            this.checkBoxAnyFinish.Text = "Any% Finish";
+            this.checkBoxAnyFinish.UseVisualStyleBackColor = true;
             //
-            // buttonDefault
+            // checkBoxHundoFinish
             //
-            this.buttonDefault.Location = new System.Drawing.Point(390, 434);
-            this.buttonDefault.Name = "buttonDefault";
-            this.buttonDefault.Size = new System.Drawing.Size(75, 23);
-            this.buttonDefault.TabIndex = 9;
-            this.buttonDefault.Text = "Default";
-            this.buttonDefault.UseVisualStyleBackColor = true;
-            this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
+            this.checkBoxHundoFinish.Checked = true;
+            this.checkBoxHundoFinish.CheckState = System.Windows.Forms.CheckState.Unchecked;
+            this.checkBoxHundoFinish.AutoSize = true;
+            this.checkBoxHundoFinish.Location = new System.Drawing.Point(43, 52);
+            this.checkBoxHundoFinish.Name = "checkBoxSplitRace";
+            this.checkBoxHundoFinish.Size = new System.Drawing.Size(48, 17);
+            this.checkBoxHundoFinish.TabIndex = 1;
+            this.checkBoxHundoFinish.Text = "100% Finish";
+            this.checkBoxHundoFinish.UseVisualStyleBackColor = true;
             // 
             // Settings
             // 
@@ -188,9 +201,9 @@
         private System.Windows.Forms.CheckBox checkBoxReset;
         private System.Windows.Forms.Panel panelSplits;
         private System.Windows.Forms.Label labelSplits;
-        private System.Windows.Forms.TreeView treeViewSplits;
-        private System.Windows.Forms.Button buttonUncheckAll;
-        private System.Windows.Forms.Button buttonCheckAll;
-        private System.Windows.Forms.Button buttonDefault;
+        private System.Windows.Forms.CheckBox checkBoxHookman;
+        private System.Windows.Forms.CheckBox checkBoxRace;
+        private System.Windows.Forms.CheckBox checkBoxAnyFinish;
+        private System.Windows.Forms.CheckBox checkBoxHundoFinish;
     }
 }

@@ -6,206 +6,69 @@ namespace LiveSplit.MC2
 {
     public partial class Settings : UserControl
     {   
-        private TreeNode nodeRaces;
-        private TreeNode nodeHookman;
-        private TreeNode nodeFinishAny;
-        private TreeNode nodeFinishHundo;
+        public bool Start { get; set; }
+        public bool Split { get; set; }
+        public bool Reset { get; set; }
+        public bool SplitHookman { get; set; }
+        public bool SplitRace { get; set; }
+        public bool FinishAny { get; set; }
+        public bool FinishHundo { get; set; }
 
         public Settings()
         {
             InitializeComponent();
-            InitializeTreeView();
+
+            checkBoxStart.DataBindings.Add("Checked", this, "Start", false, DataSourceUpdateMode.OnPropertyChanged);
+            checkBoxSplit.DataBindings.Add("Checked", this, "Split", false, DataSourceUpdateMode.OnPropertyChanged);
+            checkBoxReset.DataBindings.Add("Checked", this, "Reset", false, DataSourceUpdateMode.OnPropertyChanged);
+            checkBoxHookman.DataBindings.Add("Checked", this, "SplitHookman", false, DataSourceUpdateMode.OnPropertyChanged);
+            checkBoxRace.DataBindings.Add("Checked", this, "SplitRace", false, DataSourceUpdateMode.OnPropertyChanged);
+            checkBoxAnyFinish.DataBindings.Add("Checked", this, "FinishAny", false, DataSourceUpdateMode.OnPropertyChanged);
+            checkBoxHundoFinish.DataBindings.Add("Checked", this, "FinishHundo", false, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         public XmlNode GetSettings(XmlDocument document)
         {
             XmlElement settingsNode = document.CreateElement("Settings");
 
-            // Save Basic Checkboxes
-            settingsNode.AppendChild(ToElement(document, "Start", checkBoxStart.Checked));
-            settingsNode.AppendChild(ToElement(document, "Split", checkBoxSplit.Checked));
-            settingsNode.AppendChild(ToElement(document, "Reset", checkBoxReset.Checked));
-
-            // Save TreeView (Splits) Custom Settings
-            XmlElement customSettingsNode = document.CreateElement("CustomSettings");
-            SaveTreeNodes(document, customSettingsNode, treeViewSplits.Nodes);
-            settingsNode.AppendChild(customSettingsNode);
+            settingsNode.AppendChild(ToElement(document, "Start", Start));
+            settingsNode.AppendChild(ToElement(document, "Split", Split));
+            settingsNode.AppendChild(ToElement(document, "Reset", Reset));
+            settingsNode.AppendChild(ToElement(document, "SplitHookman", SplitHookman));
+            settingsNode.AppendChild(ToElement(document, "SplitRace", SplitRace));
+            settingsNode.AppendChild(ToElement(document, "FinishAny", FinishAny));
+            settingsNode.AppendChild(ToElement(document, "FinishHundo", FinishHundo));
 
             return settingsNode;
         }
 
         public void SetSettings(XmlNode settings)
         {
-            XmlElement element = (XmlElement) settings;
-            if (element == null) return;
+            Start = ParseBool(settings, "Start");
+            Split = ParseBool(settings, "Split");
+            Reset = ParseBool(settings, "Reset");
+            SplitHookman = ParseBool(settings, "SplitHookman");
+            SplitRace = ParseBool(settings, "SplitRace");
+            FinishAny = ParseBool(settings, "FinishAny");
+            FinishHundo = ParseBool(settings, "FinishHundo");
 
-            // Load Basic Checkboxes
-            checkBoxStart.Checked = ParseBool(settings, "Start", true);
-            checkBoxSplit.Checked = ParseBool(settings, "Split", true);
-            checkBoxReset.Checked = ParseBool(settings, "Reset", true);
+        }
 
-            // Load TreeView Custom Settings
-            XmlNode customSettingsNode = settings["CustomSettings"];
-            if (customSettingsNode != null)
+        private void checkBoxHookman_CheckStateChanged(object sender, EventArgs e)
+        {
+            checkBoxRace.Enabled = checkBoxHookman.Checked;
+
+            if (!checkBoxHookman.Checked)
             {
-                LoadTreeNodes(customSettingsNode, treeViewSplits.Nodes);
+                checkBoxRace.Checked = false;
             }
         }
 
-        private void InitializeTreeView()
-        {
-            nodeRaces = new TreeNode("Race (Start)");
-            nodeRaces.Checked = true;
-            nodeRaces.Tag = false;
-            nodeRaces.Nodes.Add(new TreeNode("Race 1"));
-            nodeRaces.Nodes.Add(new TreeNode("Race 2"));
-            nodeRaces.Nodes.Add(new TreeNode("Race 3"));
-            nodeRaces.Collapse();
-
-            nodeHookman = new TreeNode("Hookman (Complete)");
-            nodeHookman.Checked = true;
-            nodeHookman.Tag = false;
-            nodeHookman.Nodes.Add(new TreeNode("Hookman 1"));
-            nodeHookman.Nodes.Add(new TreeNode("Hookman 2"));
-            nodeHookman.Nodes.Add(new TreeNode("Hookman 3"));
-            nodeHookman.Collapse();
-
-            nodeFinishAny = new TreeNode("Any% final Split");
-            nodeFinishAny.Checked = true;
-            nodeFinishAny.Tag = false;
-
-            nodeFinishHundo = new TreeNode("Hundo% final Split");
-            nodeFinishHundo.Checked = false;
-            nodeFinishHundo.Tag = false;
-
-            treeViewSplits.Nodes.Add(nodeRaces);
-            treeViewSplits.Nodes.Add(nodeHookman);
-            treeViewSplits.Nodes.Add(nodeFinishAny);
-            treeViewSplits.Nodes.Add(nodeFinishHundo);
-            treeViewSplits.CheckBoxes = true;
-            treeViewSplits.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeViewSplits_AfterCheck);
-        }
-
-        private void treeViewSplits_AfterCheck(object sender, TreeViewEventArgs e)
-        {
-            if (e.Action != TreeViewAction.Unknown)
-            {
-                if (e.Node.Nodes.Count > 0)
-                {
-                    foreach (TreeNode node in e.Node.Nodes)
-                    {
-                        node.Checked = e.Node.Checked;
-                    }
-                }
-                else
-                {
-                    TreeNode parentNode = e.Node.Parent;
-                    if (parentNode != null)
-                    {
-                        bool allChecked = true;
-                        bool allUnchecked = true;
-                        foreach (TreeNode node in parentNode.Nodes)
-                        {
-                            if (!node.Checked)
-                            {
-                                allChecked = false;
-                            }
-                            if (node.Checked)
-                            {
-                                allUnchecked = false;
-                            }
-                        }
-                        if (allChecked)
-                        {
-                            parentNode.Checked = true;
-                        }
-                        else if (allUnchecked)
-                        {
-                            parentNode.Checked = false;
-                        }
-                        else
-                        {
-                            parentNode.Checked = false;
-                        }
-                    }
-                }
-            }
-        }
-
-        private void buttonUncheckAll_Click(object sender, EventArgs e)
-        {
-            foreach (TreeNode node in treeViewSplits.Nodes)
-            {
-                UncheckAllNodes(node);
-            }
-        }
-
-        private void UncheckAllNodes(TreeNode node)
-        {
-            node.Checked = false;
-            foreach (TreeNode childNode in node.Nodes)
-            {
-                UncheckAllNodes(childNode);
-            }
-        }
-
-        private void buttonCheckAll_Click(object sender, EventArgs e)
-        {
-            foreach (TreeNode node in treeViewSplits.Nodes)
-            {
-                CheckAllNodes(node);
-            }
-        }
-
-        private void CheckAllNodes(TreeNode node)
-        {
-            node.Checked = true;
-            foreach (TreeNode childNode in node.Nodes)
-            {
-                CheckAllNodes(childNode);
-            }
-        }
-
-        private void buttonDefault_Click(object sender, EventArgs e)
-        {
-            // Implement default behavior as needed
-        }
-
-        private void SaveTreeNodes(XmlDocument document, XmlElement parentElement, TreeNodeCollection nodes)
-        {
-            foreach (TreeNode node in nodes)
-            {
-                // Use the node's text as a safe XML tag name (strip out invalid chars if necessary)
-                string safeName = node.Text.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("%", "");
-                parentElement.AppendChild(ToElement(document, safeName, node.Checked));
-
-                if (node.Nodes.Count > 0)
-                {
-                    SaveTreeNodes(document, parentElement, node.Nodes);
-                }
-            }
-        }
-
-        private void LoadTreeNodes(XmlNode parentNode, TreeNodeCollection nodes)
-        {
-            foreach (TreeNode node in nodes)
-            {
-                string safeName = node.Text.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("%", "");
-                node.Checked = ParseBool(parentNode, safeName, node.Checked); // Default to whatever it initialized to
-
-                if (node.Nodes.Count > 0)
-                {
-                    LoadTreeNodes(parentNode, node.Nodes);
-                }
-            }
-        }
-
-        static bool ParseBool(XmlNode settings, string setting, bool default_ = false)
-        {
-            bool b;
-            return settings[setting] != null ? (bool.TryParse(settings[setting].InnerText, out b) ? b : default_) : default_;
-        }
-
+        /// <summary>
+        /// Parses the boolean values based on the serialized version of the settings.
+        /// </summary>
+        private static bool ParseBool(XmlNode settings, string setting, bool default_ = false)
+            => settings[setting] != null ? (Boolean.TryParse(settings[setting].InnerText, out bool val) ? val : default_) : default_;
         /// <summary>
         /// Returns a serialized version of a setting based on its identifier.
         /// </summary>
