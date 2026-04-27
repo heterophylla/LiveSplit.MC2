@@ -157,19 +157,20 @@ namespace LiveSplit.MC2
             this.checkBoxAnyFinish.Name = "checkBoxSplitRace";
             this.checkBoxAnyFinish.Size = new System.Drawing.Size(48, 17);
             this.checkBoxAnyFinish.TabIndex = 1;
-            this.checkBoxAnyFinish.Text = "Any% Finish";
+            this.checkBoxAnyFinish.Text = "Any% Final Split";
             this.checkBoxAnyFinish.UseVisualStyleBackColor = true;
             //
             // checkBoxHundoFinish
             //
-            this.checkBoxHundoFinish.Checked = true;
+            this.checkBoxHundoFinish.Enabled = false;
+            this.checkBoxHundoFinish.Checked = false;
             this.checkBoxHundoFinish.CheckState = System.Windows.Forms.CheckState.Unchecked;
             this.checkBoxHundoFinish.AutoSize = true;
             this.checkBoxHundoFinish.Location = new System.Drawing.Point(43, 52);
             this.checkBoxHundoFinish.Name = "checkBoxSplitRace";
             this.checkBoxHundoFinish.Size = new System.Drawing.Size(48, 17);
             this.checkBoxHundoFinish.TabIndex = 1;
-            this.checkBoxHundoFinish.Text = "100% Finish";
+            this.checkBoxHundoFinish.Text = "100% Final Split";
             this.checkBoxHundoFinish.UseVisualStyleBackColor = true;
             // 
             // Settings

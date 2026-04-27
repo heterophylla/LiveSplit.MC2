@@ -154,6 +154,7 @@ namespace LiveSplit.MC2
         public event EventHandler OnLoadStartAfterFrontend;
         public event EventHandler OnRaceStart;
         public event EventHandler OnHookmanLastCutscene;
+        public event EventHandler OnFinishAny;
 
         public Hooks(Component parent)
         {
@@ -288,6 +289,15 @@ namespace LiveSplit.MC2
                             }  
                         }
                     }
+
+                    // Split on Any% finish
+                    if (CurrentRace.Old == "laWC_WorldChampLA_Checkpoint_Two" && IsRace.Current == 0)
+                    {
+                        this.OnFinishAny?.Invoke(this, EventArgs.Empty);
+                    }
+
+                    // Split on 100% finish (Check SplitFlag for every Arcade or find value which changes after hundo[unlockingrules.csv])
+                    //if (CurrentRace.Old == "laWC_WorldChampLA_Checkpoint_Two" && IsRace.Current == 0)
                 } 
             }
             catch

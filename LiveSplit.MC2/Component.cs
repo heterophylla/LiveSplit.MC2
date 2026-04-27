@@ -24,6 +24,7 @@ namespace LiveSplit.MC2
             _hooks.OnLoadStartAfterFrontend += On_LoadStartAfterFrontend;
             _hooks.OnRaceStart += On_RaceStart;
             _hooks.OnHookmanLastCutscene += On_HookmanLastCutscene;
+            _hooks.OnFinishAny += On_FinishAny;
 
             _settings = new Settings();
 
@@ -32,6 +33,7 @@ namespace LiveSplit.MC2
 
             _timermodel = new TimerModel {CurrentState = state};
             _timermodel.CurrentState.OnStart += On_Start;
+            _timermodel.CurrentState.OnReset += On_Reset;
 
 
         }
@@ -51,30 +53,55 @@ namespace LiveSplit.MC2
             _timer.Enabled = true;
         }
 
-        void On_Start(object sender, EventArgs e)
+        private void On_Start(object sender, EventArgs e)
         {
             _timermodel.InitializeGameTime();
         }
 
-        void On_LoadStartAfterFrontend(object sender, EventArgs e) //TODO: Not working First time? Cuz of hook != 2 on first stasrt?
+        private void On_Reset(object sender, TimerPhase t)
+        {
+            ResetAutoSplit();  
+        } 
+
+        private void On_LoadStartAfterFrontend(object sender, EventArgs e)
         {
             if (_settings.Start) _timermodel.Start();
         }
 
-        void On_RaceStart(object sender, EventArgs e)
+        private void On_RaceStart(object sender, EventArgs e)
         {
             if (_settings.Split && _settings.SplitRace) 
                 _timermodel.Split();
         }
 
-        void On_HookmanLastCutscene(object sender, EventArgs e)
+        private void On_HookmanLastCutscene(object sender, EventArgs e)
         {
             if (_settings.Split && _settings.SplitHookman)
                 _timermodel.Split();
         }
+
+        private void On_FinishAny(object sender, EventArgs e)
+        {
+            if (_settings.Split && _settings.FinishAny) _timermodel.Split();
+        }
+
         public void On_Loading(bool loading) => _state.IsGameTimePaused = loading;
 
         public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode) { }
+
+        private void ResetAutoSplit()
+        {
+            _hooks.OnLoadStartAfterFrontend -= On_LoadStartAfterFrontend;
+            _hooks.OnRaceStart -= On_RaceStart;
+            _hooks.OnHookmanLastCutscene -= On_HookmanLastCutscene;
+            _hooks.OnFinishAny -= On_FinishAny;
+            _hooks?.Dispose();
+            _hooks = new Hooks(this);
+            _hooks.OnLoadStartAfterFrontend += On_LoadStartAfterFrontend;
+            _hooks.OnRaceStart += On_RaceStart;
+            _hooks.OnHookmanLastCutscene += On_HookmanLastCutscene;
+            _hooks.OnFinishAny += On_FinishAny;
+        }
 
         public override XmlNode GetSettings(XmlDocument document) => _settings.GetSettings(document);
 
