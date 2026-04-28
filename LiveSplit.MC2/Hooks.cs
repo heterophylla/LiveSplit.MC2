@@ -127,7 +127,7 @@ namespace LiveSplit.MC2
         {
             "la/angel_4b.pss", "la/Gina_4b.pss", "la/Hectr_4b.pss",
             "Paris/Ian_4b.pss", "Paris/Farid_4b.pss",
-            "Tokyo/Zen_3b.pss", "Tokyo/Ken_4b.pss"
+            "Tokyo/Zen_3b.pss", "Tokyo/Ken_4b.pss", "Tokyo/Mako_03.pss"
         };
         
         Component _parent;
