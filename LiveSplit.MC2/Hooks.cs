@@ -259,8 +259,11 @@ namespace LiveSplit.MC2
                     // Start for Paris%,Tokyo%,Savo%,Arcade%
                     //if () {}
                     // Split on Race Start
-                    if(CurrentRace.Changed && IsRace.Current != 0
-                       && _RaceName.ContainsKey(CurrentRace.Current))
+                    if(     
+                        ( (IsRace.Changed && IsRace.Current != 0)
+                        || (_loading.Changed && _loading.Current == 1) ) //for Savo races, cuz they're split on finish
+                       && _RaceName.ContainsKey(CurrentRace.Current)
+                    )
                     {
                         SplitPair splitPair = _RaceName[CurrentRace.Current];
                         if (!splitPair.SplitFlag)
