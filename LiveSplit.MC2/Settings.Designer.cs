@@ -154,7 +154,7 @@ namespace LiveSplit.MC2
             this.checkBoxAnyFinish.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxAnyFinish.AutoSize = true;
             this.checkBoxAnyFinish.Location = new System.Drawing.Point(43, 35);
-            this.checkBoxAnyFinish.Name = "checkBoxSplitRace";
+            this.checkBoxAnyFinish.Name = "checkBoxAnyFinish";
             this.checkBoxAnyFinish.Size = new System.Drawing.Size(48, 17);
             this.checkBoxAnyFinish.TabIndex = 1;
             this.checkBoxAnyFinish.Text = "Any% Final Split";
@@ -162,12 +162,11 @@ namespace LiveSplit.MC2
             //
             // checkBoxHundoFinish
             //
-            this.checkBoxHundoFinish.Enabled = false;
-            this.checkBoxHundoFinish.Checked = false;
-            this.checkBoxHundoFinish.CheckState = System.Windows.Forms.CheckState.Unchecked;
+            this.checkBoxHundoFinish.Checked = true;
+            this.checkBoxHundoFinish.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxHundoFinish.AutoSize = true;
             this.checkBoxHundoFinish.Location = new System.Drawing.Point(43, 52);
-            this.checkBoxHundoFinish.Name = "checkBoxSplitRace";
+            this.checkBoxHundoFinish.Name = "checkBoxHundoFinish";
             this.checkBoxHundoFinish.Size = new System.Drawing.Size(48, 17);
             this.checkBoxHundoFinish.TabIndex = 1;
             this.checkBoxHundoFinish.Text = "100% Final Split";

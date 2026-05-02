@@ -142,6 +142,9 @@ namespace LiveSplit.MC2
         MemoryWatcher<byte> IsCruise;
         StringWatcher CurrentRace;
         StringWatcher CurrentCutscene;
+        MemoryWatcher<long> RaceTrackerLA;
+        MemoryWatcher<long> RaceTrackerParis;
+        MemoryWatcher<long> RaceTrackerTokyo;
 
         X86Generator _maingen = new X86Generator();
         X86Generator _game = new X86Generator();
@@ -155,6 +158,9 @@ namespace LiveSplit.MC2
         public event EventHandler OnRaceStart;
         public event EventHandler OnHookmanLastCutscene;
         public event EventHandler OnFinishAny;
+        public event EventHandler OnFinishHundo;
+
+        private bool HundoAchieved = false;  
 
         public Hooks(Component parent)
         {
@@ -202,6 +208,13 @@ namespace LiveSplit.MC2
             _memory.Add(CurrentRace);
             CurrentCutscene = new StringWatcher(_baseaddr + 0x2C31A0, 64);
             _memory.Add(CurrentCutscene);
+
+            RaceTrackerLA = new MemoryWatcher<long>(new DeepPointer("mc2.exe", 0x2C3898, 0x30));
+            _memory.Add(RaceTrackerLA);
+            RaceTrackerParis = new MemoryWatcher<long>(new DeepPointer("mc2.exe", 0x2C3898, 0x38));
+            _memory.Add(RaceTrackerParis);
+            RaceTrackerTokyo = new MemoryWatcher<long>(new DeepPointer("mc2.exe", 0x2C3898, 0x40));
+            _memory.Add(RaceTrackerTokyo);
             
         }
 
@@ -299,8 +312,15 @@ namespace LiveSplit.MC2
                         this.OnFinishAny?.Invoke(this, EventArgs.Empty);
                     }
 
-                    // Split on 100% finish (Check SplitFlag for every Arcade or find value which changes after hundo[unlockingrules.csv])
-                    //if (CurrentRace.Old == "laWC_WorldChampLA_Checkpoint_Two" && IsRace.Current == 0)
+                    // Split on 100% finish 
+                    if (RaceTrackerLA.Current == 0x3EFFDFEFDEF7
+                        &&  RaceTrackerParis.Current == 0x1FBFF7EF7BDE
+                        &&  RaceTrackerTokyo.Current == 0x3FBFF7BDEFDE
+                        && !HundoAchieved)
+                    {
+                        this.OnFinishHundo?.Invoke(this, EventArgs.Empty); 
+                        HundoAchieved = true;
+                    }
                 } 
             }
             catch

@@ -25,6 +25,7 @@ namespace LiveSplit.MC2
             _hooks.OnRaceStart += On_RaceStart;
             _hooks.OnHookmanLastCutscene += On_HookmanLastCutscene;
             _hooks.OnFinishAny += On_FinishAny;
+            _hooks.OnFinishHundo += On_FinishHundo;
 
             _settings = new Settings();
 
@@ -83,6 +84,11 @@ namespace LiveSplit.MC2
         private void On_FinishAny(object sender, EventArgs e)
         {
             if (_settings.Split && _settings.FinishAny) _timermodel.Split();
+        }
+
+        private void On_FinishHundo(object sender, EventArgs e)
+        {
+            if (_settings.Split && _settings.FinishHundo) _timermodel.Split();
         }
 
         public void On_Loading(bool loading) => _state.IsGameTimePaused = loading;
