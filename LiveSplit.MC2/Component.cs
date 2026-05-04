@@ -21,11 +21,12 @@ namespace LiveSplit.MC2
         {
             _state = state;
             _hooks = new Hooks(this);
-            _hooks.OnLoadStartAfterFrontend += On_LoadStartAfterFrontend;
+            _hooks.OnFirstCutscene += On_FirstCutscene;
             _hooks.OnRaceStart += On_RaceStart;
             _hooks.OnHookmanLastCutscene += On_HookmanLastCutscene;
             _hooks.OnFinishAny += On_FinishAny;
             _hooks.OnFinishHundo += On_FinishHundo;
+            _hooks.OnNewSaveEnter += On_NewSaveEnter;
 
             _settings = new Settings();
 
@@ -64,7 +65,7 @@ namespace LiveSplit.MC2
             ResetAutoSplit();  
         } 
 
-        private void On_LoadStartAfterFrontend(object sender, EventArgs e)
+        private void On_FirstCutscene(object sender, EventArgs e)
         {
             if (_settings.Start) _timermodel.Start();
         }
@@ -91,22 +92,31 @@ namespace LiveSplit.MC2
             if (_settings.Split && _settings.FinishHundo) _timermodel.Split();
         }
 
+        private void On_NewSaveEnter(object sender, EventArgs e)
+        {
+            ResetAutoSplit();
+        }
+
         public void On_Loading(bool loading) => _state.IsGameTimePaused = loading;
 
         public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode) { }
 
         private void ResetAutoSplit()
         {
-            _hooks.OnLoadStartAfterFrontend -= On_LoadStartAfterFrontend;
+            _hooks.OnFirstCutscene -= On_FirstCutscene;
             _hooks.OnRaceStart -= On_RaceStart;
             _hooks.OnHookmanLastCutscene -= On_HookmanLastCutscene;
             _hooks.OnFinishAny -= On_FinishAny;
+            _hooks.OnFinishHundo -= On_FinishHundo;
+            _hooks.OnNewSaveEnter -= On_NewSaveEnter;
             _hooks?.Dispose();
             _hooks = new Hooks(this);
-            _hooks.OnLoadStartAfterFrontend += On_LoadStartAfterFrontend;
+            _hooks.OnFirstCutscene += On_FirstCutscene;
             _hooks.OnRaceStart += On_RaceStart;
             _hooks.OnHookmanLastCutscene += On_HookmanLastCutscene;
             _hooks.OnFinishAny += On_FinishAny;
+            _hooks.OnFinishHundo += On_FinishHundo;
+            _hooks.OnNewSaveEnter += On_NewSaveEnter;
         }
 
         public override XmlNode GetSettings(XmlDocument document) => _settings.GetSettings(document);

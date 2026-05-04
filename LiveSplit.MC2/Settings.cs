@@ -8,7 +8,6 @@ namespace LiveSplit.MC2
     {   
         public bool Start { get; set; }
         public bool Split { get; set; }
-        public bool Reset { get; set; }
         public bool SplitHookman { get; set; }
         public bool SplitRace { get; set; }
         public bool FinishAny { get; set; }
@@ -20,7 +19,6 @@ namespace LiveSplit.MC2
 
             checkBoxStart.DataBindings.Add("Checked", this, "Start", false, DataSourceUpdateMode.OnPropertyChanged);
             checkBoxSplit.DataBindings.Add("Checked", this, "Split", false, DataSourceUpdateMode.OnPropertyChanged);
-            checkBoxReset.DataBindings.Add("Checked", this, "Reset", false, DataSourceUpdateMode.OnPropertyChanged);
             checkBoxHookman.DataBindings.Add("Checked", this, "SplitHookman", false, DataSourceUpdateMode.OnPropertyChanged);
             checkBoxRace.DataBindings.Add("Checked", this, "SplitRace", false, DataSourceUpdateMode.OnPropertyChanged);
             checkBoxAnyFinish.DataBindings.Add("Checked", this, "FinishAny", false, DataSourceUpdateMode.OnPropertyChanged);
@@ -33,7 +31,6 @@ namespace LiveSplit.MC2
 
             settingsNode.AppendChild(ToElement(document, "Start", Start));
             settingsNode.AppendChild(ToElement(document, "Split", Split));
-            settingsNode.AppendChild(ToElement(document, "Reset", Reset));
             settingsNode.AppendChild(ToElement(document, "SplitHookman", SplitHookman));
             settingsNode.AppendChild(ToElement(document, "SplitRace", SplitRace));
             settingsNode.AppendChild(ToElement(document, "FinishAny", FinishAny));
@@ -46,7 +43,6 @@ namespace LiveSplit.MC2
         {
             Start = ParseBool(settings, "Start");
             Split = ParseBool(settings, "Split");
-            Reset = ParseBool(settings, "Reset");
             SplitHookman = ParseBool(settings, "SplitHookman");
             SplitRace = ParseBool(settings, "SplitRace");
             FinishAny = ParseBool(settings, "FinishAny");

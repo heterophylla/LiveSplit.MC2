@@ -154,11 +154,12 @@ namespace LiveSplit.MC2
         X86Generator _carviewer = new X86Generator();
         X86Generator _jmp = new X86Generator();
 
-        public event EventHandler OnLoadStartAfterFrontend;
+        public event EventHandler OnFirstCutscene;
         public event EventHandler OnRaceStart;
         public event EventHandler OnHookmanLastCutscene;
         public event EventHandler OnFinishAny;
         public event EventHandler OnFinishHundo;
+        public event EventHandler OnNewSaveEnter;
 
         private bool HundoAchieved = false;  
 
@@ -267,7 +268,7 @@ namespace LiveSplit.MC2
                     if (_loading.Changed && _loading.Current == 0 && IsCruise.Current == 0 &&
                         CurrentCutscene.Current == "la/moses_01.pss")
                     {
-                        this.OnLoadStartAfterFrontend?.Invoke(this, EventArgs.Empty);
+                        this.OnFirstCutscene?.Invoke(this, EventArgs.Empty);
                     }
                     // Start for Paris%,Tokyo%,Savo%,Arcade%
                     //if () {}
@@ -313,7 +314,8 @@ namespace LiveSplit.MC2
                     }
 
                     // Split on 100% finish 
-                    if (RaceTrackerLA.Current == 0x3EFFDFEFDEF7
+                    if ( /* ( IsRace.Current != 0 || IsRace.Old != 0 ) its probably not working but good idea */
+                         RaceTrackerLA.Current == 0x3EFFDFEFDEF7
                         &&  RaceTrackerParis.Current == 0x1FBFF7EF7BDE
                         &&  RaceTrackerTokyo.Current == 0x3FBFF7BDEFDE
                         && !HundoAchieved)
@@ -321,6 +323,13 @@ namespace LiveSplit.MC2
                         this.OnFinishHundo?.Invoke(this, EventArgs.Empty); 
                         HundoAchieved = true;
                     }
+
+                    // Reset values when you enter save with 0 beaten races
+                    if ( RaceTrackerLA.Changed && RaceTrackerLA.Current == 0x0 )
+                    {
+                        this.OnNewSaveEnter?.Invoke(this, EventArgs.Empty); 
+                    }
+
                 } 
             }
             catch

@@ -34,7 +34,6 @@ namespace LiveSplit.MC2
             this.labelOptions = new System.Windows.Forms.Label();
             this.checkBoxStart = new System.Windows.Forms.CheckBox();
             this.checkBoxSplit = new System.Windows.Forms.CheckBox();
-            this.checkBoxReset = new System.Windows.Forms.CheckBox();
             this.panelSplits = new System.Windows.Forms.Panel();
             this.labelSplits = new System.Windows.Forms.Label();
             this.checkBoxHookman = new System.Windows.Forms.CheckBox();
@@ -47,7 +46,6 @@ namespace LiveSplit.MC2
             //
             // panelOptions
             //
-            this.panelOptions.Controls.Add(this.checkBoxReset);
             this.panelOptions.Controls.Add(this.checkBoxSplit);
             this.panelOptions.Controls.Add(this.checkBoxStart);
             this.panelOptions.Controls.Add(this.labelOptions);
@@ -74,7 +72,7 @@ namespace LiveSplit.MC2
             this.checkBoxStart.Name = "checkBoxStart";
             this.checkBoxStart.Size = new System.Drawing.Size(48, 17);
             this.checkBoxStart.TabIndex = 1;
-            this.checkBoxStart.Text = "Start";
+            this.checkBoxStart.Text = "AutoStart";
             this.checkBoxStart.UseVisualStyleBackColor = true;
             //
             // checkBoxSplit
@@ -82,24 +80,12 @@ namespace LiveSplit.MC2
             this.checkBoxSplit.Checked = true;
             this.checkBoxSplit.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxSplit.AutoSize = true;
-            this.checkBoxSplit.Location = new System.Drawing.Point(109, 3);
+            this.checkBoxSplit.Location = new System.Drawing.Point(129, 3);
             this.checkBoxSplit.Name = "checkBoxSplit";
             this.checkBoxSplit.Size = new System.Drawing.Size(46, 17);
             this.checkBoxSplit.TabIndex = 2;
-            this.checkBoxSplit.Text = "Split";
+            this.checkBoxSplit.Text = "AutoSplit";
             this.checkBoxSplit.UseVisualStyleBackColor = true;
-            //
-            // checkBoxReset
-            //
-            this.checkBoxReset.Checked = false;
-            this.checkBoxReset.CheckState = System.Windows.Forms.CheckState.Unchecked;
-            this.checkBoxReset.AutoSize = true;
-            this.checkBoxReset.Location = new System.Drawing.Point(161, 3);
-            this.checkBoxReset.Name = "checkBoxReset";
-            this.checkBoxReset.Size = new System.Drawing.Size(98, 17);
-            this.checkBoxReset.TabIndex = 3;
-            this.checkBoxReset.Text = "Reset";
-            this.checkBoxReset.UseVisualStyleBackColor = true;
             //
             // panelSplits
             //
@@ -198,7 +184,6 @@ namespace LiveSplit.MC2
         private System.Windows.Forms.Label labelOptions;
         private System.Windows.Forms.CheckBox checkBoxStart;
         private System.Windows.Forms.CheckBox checkBoxSplit;
-        private System.Windows.Forms.CheckBox checkBoxReset;
         private System.Windows.Forms.Panel panelSplits;
         private System.Windows.Forms.Label labelSplits;
         private System.Windows.Forms.CheckBox checkBoxHookman;
